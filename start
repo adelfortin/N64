@@ -293,8 +293,10 @@ demande_du_mot_de_passe() {
 assigner_les_variables() {
 local CHAMP_A_DECHIFFRER="$1"
 local FICHIER_DE_SORTIE="$2"
-
-PROXY=$(echo "$CHAMP_A_DECHIFFRER" | gpg --batch --passphrase "$MOT_DE_PASSE" --decrypt)
+PREF="http://"
+SUFF=$(echo "$CHAMP_A_DECHIFFRER" | gpg --batch --passphrase "$MOT_DE_PASSE" --decrypt)
+PROXY="$PREF$SUFF"
+echo "$PROXY"
 
 if [ $? -ne 0 ]; then
 echo "ERREUR : Le mot de passe fourni est incorrect. Le déchiffrage a échoué."
@@ -303,7 +305,7 @@ fi
 }
 
 injection_des_données() {
-  PROXY_CHIFFRE="jA0ECQMC2lrwkhRUWVr/0lcBCg/WHKfrTJWXOjnqja53gaIpH009FAEbDA7BxEgMxCbPFx1szYd9RClJ5n2BSa7s2EA0g5mRBkbIcxQTOb7EgdzXmrpAACDjDWUnsUUgasz0ozUXmQ8="
+  PROXY_CHIFFRE="jA0ECQMCjNRnFz+uCWD/0lABX5DmW7PgHXojlKrqxE6sAu79p/3lQkSJQ71V0MxCOtn8d7JMfsNLomHznR+kkFkfwj37CBBOgG0VL5lSYwsi7rkLjo3oIsb/V7fTTI8fVw=="
   assigner_les_variables "$PROXY_CHIFFRE" "$PROXY"
 }
 
