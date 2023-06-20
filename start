@@ -302,7 +302,7 @@ exit $MAUVAIS_MOT_PASSE
 fi
 }
 
-injection_des_données() {
+injection_des_donnees() {
   PROXY_CHIFFRE="U2FsdGVkX1//L3XWSzc4B89CVF2/ntDeaYSpfB7Hg2lHpuJDwQF0zBRtavNLp2cJ"
   assigner_les_variables "$PROXY_CHIFFRE" "$PROXY"
 }
@@ -315,7 +315,7 @@ injection_des_données() {
 
 traitement() {
   demande_du_mot_de_passe
-  injection_des_données
+  injection_des_donnees
   gestion_des_options "$@"
 }
 
