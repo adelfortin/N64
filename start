@@ -304,7 +304,7 @@ fi
 
 injection_des_données() {
   PROXY_CHIFFRE="U2FsdGVkX1//L3XWSzc4B89CVF2/ntDeaYSpfB7Hg2lHpuJDwQF0zBRtavNLp2cJ"
-  assigner_les_variables() "$PROXY_CHIFFRE" "$PROXY"
+  assigner_les_variables "$PROXY_CHIFFRE" "$PROXY"
 }
 
 ##########################################################
