@@ -150,7 +150,7 @@ ajouter_proxy() {
   fi
 
   if [[ $? == 0 ]]; then 
-    configuration_des_repository "${DEPOTS[@]}"
+    configuration_des_repositories "${DEPOTS[@]}"
   else
     echo "ERREUR : La configuration du proxy n'a pas pu se faire."
     exit 1
