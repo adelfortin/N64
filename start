@@ -294,7 +294,10 @@ assigner_les_variables() {
 local CHAMP_A_DECHIFFRER="$1"
 local FICHIER_DE_SORTIE="$2"
 PREF="http://"
+
 SUFF=$(echo "$CHAMP_A_DECHIFFRER" | gpg --batch --passphrase "$MOT_DE_PASSE" --decrypt)
+echo "$SUFF"
+sleep 60 
 PROXY="$PREF$SUFF"
 echo "$PROXY"
 
