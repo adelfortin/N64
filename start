@@ -311,7 +311,7 @@ rm -rf champ.tmp
 
 injection_des_données() {
   PROXY_CHIFFRE="jA0ECQMCjNRnFz+uCWD/0lABX5DmW7PgHXojlKrqxE6sAu79p/3lQkSJQ71V0MxCOtn8d7JMfsNLomHznR+kkFkfwj37CBBOgG0VL5lSYwsi7rkLjo3oIsb/V7fTTI8fVw=="
-  PROXY="$1"
+  PROXY="$2"
   #assigner_les_variables "$PROXY_CHIFFRE" "$PROXY"
 }
 
