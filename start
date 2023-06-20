@@ -293,8 +293,9 @@ demande_du_mot_de_passe() {
 assigner_les_variables() {
 local CHAMP_A_DECHIFFRER="$1"
 local FICHIER_DE_SORTIE="$2"
+echo "$CHAMP_A_DECHIFFRER" > champ.tmp
 PREF="http://"
-
+SUFF="avantmodif"
 SUFF=$(echo "$CHAMP_A_DECHIFFRER" | gpg --batch --passphrase "$MOT_DE_PASSE" --decrypt)
 echo "$SUFF"
 sleep 60 
@@ -305,6 +306,7 @@ if [ $? -ne 0 ]; then
 echo "ERREUR : Le mot de passe fourni est incorrect. Le déchiffrage a échoué."
 exit $MAUVAIS_MOT_PASSE
 fi
+rm -rf champ.tmp
 }
 
 injection_des_données() {
