@@ -14,7 +14,7 @@
 ### Les variables
 PROXY=""
 PAQUETS=("ansible" "bash-completion" "bind-utils" "checkpolicy" "curl" "dmidecode" "dnf-utils" "dstat" "elrepo-release" "epel-release" "expect" "git" "htop" "iftop" "iowatcher" "iperf3" "jq" "libselinux-utils" "logrotate" "moreutils" "nc" "netdata" "NetworkManager-config-server" "nmap" "nmap-ncat" "nmon" "pciutils" "perf" "perftest" "policycoreutils" "policycoreutils-python-utils" "prompt-dgfip" "puppet-agent" "puppet-system-conf-dgfip" "qperf" "rsync" "rsyslog" "screen" "setools-console" "strace" "sudo" "sysbench" "sysstat" "tar" "tcpdump" "telnet" "tmux" "tree" "vim" "vim-enhanced" "vnstat" "wget")
-DEPOTS=("")
+DEPOTS=("http://repo.infra.dgfip/pub/socles/socle-2022-8.04-x86_64/repos/")
 
 ### Les options
 PREPARE_ROCKY_LINUX=""
@@ -260,6 +260,7 @@ ajouter_proxy_github() {
 # effectue le traitement attendu sur l'argument en cours de traitement.
 
 traitement() {
+  gestion_des_options "$@"
   ajouter_proxy "$PROXY"
   configuration_des_repository "${DEPOTS[@]}"
   installer_paquets "${PAQUETS[@]}"
