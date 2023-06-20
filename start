@@ -12,8 +12,9 @@
 
 #### DEBUT DU PROGRAMME
 ### Les variables
+MOT_DE_PASSE=""
 PROXY=""
-PAQUETS=("ansible" "bash-completion" "bind-utils" "checkpolicy" "curl" "dmidecode" "dnf-utils" "dstat" "elrepo-release" "epel-release" "expect" "git" "htop" "iftop" "iowatcher" "iperf3" "jq" "libselinux-utils" "logrotate" "moreutils" "nc" "netdata" "NetworkManager-config-server" "nmap" "nmap-ncat" "nmon" "pciutils" "perf" "perftest" "policycoreutils" "policycoreutils-python-utils" "prompt-dgfip" "puppet-agent" "puppet-system-conf-dgfip" "qperf" "rsync" "rsyslog" "screen" "setools-console" "strace" "sudo" "sysbench" "sysstat" "tar" "tcpdump" "telnet" "tmux" "tree" "vim" "vim-enhanced" "vnstat" "wget")
+PAQUETS_=("ansible" "bash-completion" "bind-utils" "checkpolicy" "curl" "dmidecode" "dnf-utils" "dstat" "elrepo-release" "epel-release" "expect" "git" "htop" "iftop" "iowatcher" "iperf3" "jq" "libselinux-utils" "logrotate" "moreutils" "nc" "netdata" "NetworkManager-config-server" "nmap" "nmap-ncat" "nmon" "pciutils" "perf" "perftest" "policycoreutils" "policycoreutils-python-utils" "prompt-dgfip" "puppet-agent" "puppet-system-conf-dgfip" "qperf" "rsync" "rsyslog" "screen" "setools-console" "strace" "sudo" "sysbench" "sysstat" "tar" "tcpdump" "telnet" "tmux" "tree" "vim" "vim-enhanced" "vnstat" "wget")
 DEPOTS=("http://repo.infra.dgfip/pub/socles/socle-2022-8.04-x86_64/repos/")
 
 ### Les options
@@ -22,6 +23,9 @@ PREPARE_UBUNTU=""
 PREPARE_CENTOS=""
 PREPARE_DEBIAN=""
 PREPARE_ZORINOS=""
+
+# Les erreurs
+MAUVAIS_MOT_PASSE=81
 
 # Fonction gestion_des_options DESCRIPTION :
 # interprète les options choisi pour le script et prend les actions attendus en consèquence 
@@ -69,6 +73,13 @@ gestion_des_options() {
     GESTIONNAIRE_DE_PAQUETS="apt"
   elif [ "$PREPARE_ZORINOS" -eq 1 ]; then
     GESTIONNAIRE_DE_PAQUETS="apt"
+  fi
+
+  if [[ $? == 0 ]]; then 
+    ajouter_proxy "$PROXY"
+  else
+    menu_aide
+    exit 1
   fi
 }
 
@@ -138,7 +149,13 @@ ajouter_proxy() {
     return 1
   fi
 
-  return 0
+  if [[ $? == 0 ]]; then 
+    configuration_des_repository "${DEPOTS[@]}"
+  else
+    echo "ERREUR : La configuration du proxy n'a pas pu se faire."
+    exit 1
+  fi
+
 }
 
 
@@ -166,10 +183,7 @@ installer_paquets() {
   # Installe les paquets un par un
   for paquet in "${paquets[@]}"; do
     echo -e "Installation du paquet \e[1;36m$paquet\e[0m"
-
-    # Effectue l'installation du paquet
-    # ...
-    # Exemple : sudo dnf install "$paquet"
+      sudo dnf install $paquet
 
     # Vérifie si l'installation a réussi
     if [ $? -eq 0 ]; then
@@ -180,6 +194,13 @@ installer_paquets() {
   done
 
   echo -e "\e[1;33mInstallation terminée.\e[0m"
+
+  if [[ $? == 0 ]]; then 
+    ajouter_proxy_github "$PROXY"
+  else
+    echo "ERREUR : L'installation des paquets n'a pas pu se faire."
+    exit 1
+  fi
 }
 
 # Fonction pour la configuration des dépôts
@@ -228,6 +249,14 @@ configuration_des_repositories() {
   done
 
   echo -e "\e[1;33mConfiguration des dépôts terminée.\e[0m"
+
+  if [[ $? == 0 ]]; then 
+    installer_paquets "${PAQUETS[@]}"
+  else
+    echo "ERREUR : La configuration des dépots n'a pas pu se faire."
+    exit 1
+  fi
+
 }
 
 ajouter_proxy_github() {
@@ -252,6 +281,31 @@ ajouter_proxy_github() {
   fi
   return 0
 }
+## Fonction demande_du_mot_de_passe DESCRIPTION :
+# effectue une demande du mot_de_passe pour permettre l'utilisation correcte du script 
+demande_du_mot_de_passe() {
+  echo "Merci de renseigner le mot de passe requis pour l'utilisation de ce script"
+  read -s MOT_DE_PASSE
+}
+
+# Fonction assigner_les_variables DESCRIPTION :
+# pour assigner les données sensible de manière sécurisé dans le script (attention l'utilisation d'un mot de passe incorrect met fin au script immédiatement)
+assigner_les_variables() {
+local CHAMP_A_DECHIFFRER="$1"
+local FICHIER_DE_SORTIE="$2"
+
+openssl enc -aes-256-cbc -d -in "$CHAMP_A_DECHIFFRER" -out "$FICHIER_DE_SORTIE" -k "$MOT_DE_PASSE"
+
+if [ $? -ne 0 ]; then
+echo "ERREUR : Le mot de passe fourni est incorrect. Le déchiffrage a échoué."
+exit $MAUVAIS_MOT_PASSE
+fi
+}
+
+injection_des_données() {
+  PROXY_CHIFFRE="U2FsdGVkX1//L3XWSzc4B89CVF2/ntDeaYSpfB7Hg2lHpuJDwQF0zBRtavNLp2cJ"
+  assigner_les_variables() "$PROXY_CHIFFRE" "$PROXY"
+}
 
 ##########################################################
 ### Fonctions dédiés au traitement des arguments
@@ -260,11 +314,9 @@ ajouter_proxy_github() {
 # effectue le traitement attendu sur l'argument en cours de traitement.
 
 traitement() {
+  demande_du_mot_de_passe
+  injection_des_données
   gestion_des_options "$@"
-  ajouter_proxy "$PROXY"
-  configuration_des_repository "${DEPOTS[@]}"
-  installer_paquets "${PAQUETS[@]}"
-  ajouter_proxy_github "$PROXY"
 }
 
 ## Fonction usage DESCRIPTION :
