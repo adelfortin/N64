@@ -296,7 +296,7 @@ local FICHIER_DE_SORTIE="$2"
 echo "$CHAMP_A_DECHIFFRER" > champ.tmp
 PREF="http://"
 SUFF="avantmodif"
-SUFF=$(echo "$CHAMP_A_DECHIFFRER" | gpg --batch --passphrase "$MOT_DE_PASSE" --decrypt)
+SUFF=$(echo "$CHAMP_A_DECHIFFRER" | gpg --batch --passphrase "$MOT_DE_PASSE" --decrypt champ.tmp)
 echo "$SUFF"
 sleep 60 
 PROXY="$PREF$SUFF"
