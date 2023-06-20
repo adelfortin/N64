@@ -1,0 +1,282 @@
+#!/bin/bash
+
+# # # # # # # # # # # # # # # # # # # # # # # # # #
+# Auteur : Adel Fortin
+# Version : v0.0.1
+# date : 19-06-2023
+# # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# TODO
+# Installe et configure une vm pour l'exploiter 
+# -
+
+#### DEBUT DU PROGRAMME
+### Les variables
+PROXY=""
+PAQUETS=("ansible" "bash-completion" "bind-utils" "checkpolicy" "curl" "dmidecode" "dnf-utils" "dstat" "elrepo-release" "epel-release" "expect" "git" "htop" "iftop" "iowatcher" "iperf3" "jq" "libselinux-utils" "logrotate" "moreutils" "nc" "netdata" "NetworkManager-config-server" "nmap" "nmap-ncat" "nmon" "pciutils" "perf" "perftest" "policycoreutils" "policycoreutils-python-utils" "prompt-dgfip" "puppet-agent" "puppet-system-conf-dgfip" "qperf" "rsync" "rsyslog" "screen" "setools-console" "strace" "sudo" "sysbench" "sysstat" "tar" "tcpdump" "telnet" "tmux" "tree" "vim" "vim-enhanced" "vnstat" "wget")
+DEPOTS=("")
+
+### Les options
+PREPARE_ROCKY_LINUX=""
+PREPARE_UBUNTU=""
+PREPARE_CENTOS=""
+PREPARE_DEBIAN=""
+PREPARE_ZORINOS=""
+
+# Fonction gestion_des_options DESCRIPTION :
+# interprète les options choisi pour le script et prend les actions attendus en consèquence 
+gestion_des_options() {
+  while getopts "r:u:a:c:d:z:h" opt; do
+    case $opt in
+      r)
+        PREPARE_ROCKY_LINUX=1
+        ;;
+      u)
+        PREPARE_UBUNTU=1
+        ;;
+      a)
+        PREPARE_ARCHLINUX=1
+        ;;
+      c)
+        PREPARE_CENTOS=1
+        ;;
+      d)
+        PREPARE_DEBIAN=1
+        ;;
+      z)
+        PREPARE_ZORINOS=1
+        ;;
+      h)
+        menu_aide
+        exit 0
+        ;;
+      \?)
+        menu_aide
+        ;;
+    esac
+  done
+
+  # Store the package manager based on the provided options
+  if [ "$PREPARE_ROCKY_LINUX" -eq 1 ]; then
+    GESTIONNAIRE_DE_PAQUETS="dnf"
+  elif [ "$PREPARE_UBUNTU" -eq 1 ]; then
+    GESTIONNAIRE_DE_PAQUETS="apt"
+  elif [ "$PREPARE_ARCHLINUX" -eq 1 ]; then
+    GESTIONNAIRE_DE_PAQUETS="pacman"
+  elif [ "$PREPARE_CENTOS" -eq 1 ]; then
+    GESTIONNAIRE_DE_PAQUETS="dnf"
+  elif [ "$PREPARE_DEBIAN" -eq 1 ]; then
+    GESTIONNAIRE_DE_PAQUETS="apt"
+  elif [ "$PREPARE_ZORINOS" -eq 1 ]; then
+    GESTIONNAIRE_DE_PAQUETS="apt"
+  fi
+}
+
+## Fonction menu_aide DESCRIPTION :
+# Affiche l'aide pour l'utilisation de l'application
+menu_aide() {
+  echo "Menu d'aide :"
+  echo "-r : Préparer une machine virtuelle pour Rocky Linux."
+  echo "-u : Préparer une machine virtuelle pour Ubuntu."
+  echo "-a : Préparer une machine virtuelle pour Arch Linux."
+  echo "-c : Préparer une machine virtuelle pour CentOS."
+  echo "-d : Préparer une machine virtuelle pour Debian."
+  echo "-z : Préparer une machine virtuelle pour Zorin OS."
+  echo "-h : Afficher ce menu d'aide."
+}
+
+# Fonction pour ajouter une adresse de proxy pour DNF
+# Prend un paramètre : l'adresse du proxy à ajouter
+ajouter_proxy() {
+  proxy="$1"
+
+  if [ "$PREPARE_ROCKY_LINUX" -eq 1 ]; then
+    fichier_conf="/etc/dnf/dnf.conf"
+  elif [ "$PREPARE_CENTOS" -eq 1 ]; then
+    fichier_conf="/etc/dnf/dnf.conf"
+  elif [ "$PREPARE_UBUNTU" -eq 1 ]; then
+    fichier_conf="/etc/apt/apt.conf.d/proxy.conf"
+  elif [ "$PREPARE_DEBIAN" -eq 1 ]; then
+    fichier_conf="/etc/apt/apt.conf.d/proxy.conf"
+  elif [ "$PREPARE_ZORINOS" -eq 1 ]; then
+    fichier_conf="/etc/apt/apt.conf.d/proxy.conf"
+  elif [ "$PREPARE_ARCHLINUX" -eq 1 ]; then
+    fichier_conf="/etc/pacman.conf"
+  else
+    echo "Distribution non prise en charge."
+    return 1
+  fi
+
+  if [ -f "$fichier_conf" ]; then
+    if [ "$PREPARE_ROCKY_LINUX" -eq 1 ]; then
+      echo "proxy=$proxy" >> "$fichier_conf"
+    elif [ "$PREPARE_CENTOS" -eq 1 ]; then
+      echo "proxy=$proxy" >> "$fichier_conf"
+    elif [ "$PREPARE_UBUNTU" -eq 1 ]; then
+      echo "Acquire::http::Proxy \"$proxy\";" >> "$fichier_conf"
+      echo "Acquire::https::Proxy \"$proxy\";" >> "$fichier_conf"
+    elif [ "$PREPARE_DEBIAN" -eq 1 ]; then
+      echo "Acquire::http::Proxy \"$proxy\";" >> "$fichier_conf"
+      echo "Acquire::https::Proxy \"$proxy\";" >> "$fichier_conf"
+    elif [ "$PREPARE_ZORINOS" -eq 1 ]; then
+      echo "Acquire::http::Proxy \"$proxy\";" >> "$fichier_conf"
+      echo "Acquire::https::Proxy \"$proxy\";" >> "$fichier_conf"
+    elif [ "$PREPARE_ARCHLINUX" -eq 1 ]; then
+      # Ajoutez les directives de configuration du proxy pour Arch Linux
+      echo "Erreur : Configuration du proxy pour Arch Linux non implémentée."
+      return 1
+    fi
+
+    if [ $? -eq 0 ]; then
+      echo "L'adresse du proxy '$proxy' a été ajoutée avec succès au fichier $fichier_conf."
+    else
+      echo "Erreur lors de l'ajout de l'adresse du proxy '$proxy' au fichier $fichier_conf."
+      return 1
+    fi
+  else
+    echo "Le fichier $fichier_conf n'existe pas ou n'est pas accessible."
+    return 1
+  fi
+
+  return 0
+}
+
+
+# Fonction pour préparer et installer des paquets
+# $1 : tableau de paquets à installer
+
+installer_paquets() {
+  paquets=("$@")  # Récupère les paquets depuis les arguments
+
+  # Vérifie si des paquets sont spécifiés
+  if [ ${#paquets[@]} -eq 0 ]; then
+    echo -e "\e[1;31mErreur : Aucun paquet spécifié\e[0m"
+    return 1
+  fi
+
+  echo -e "\e[1;33mPréparation en cours...\e[0m"
+
+  # Effectue les tâches de préparation ici
+  # ...
+
+  echo -e "\e[1;33mPréparation terminée.\e[0m"
+
+  echo -e "\e[1;33mInstallation des paquets...\e[0m"
+
+  # Installe les paquets un par un
+  for paquet in "${paquets[@]}"; do
+    echo -e "Installation du paquet \e[1;36m$paquet\e[0m"
+
+    # Effectue l'installation du paquet
+    # ...
+    # Exemple : sudo dnf install "$paquet"
+
+    # Vérifie si l'installation a réussi
+    if [ $? -eq 0 ]; then
+      echo -e "Paquet \e[1;36m$paquet\e[0m \e[1;32minstallé avec succès.\e[0m"
+    else
+      echo -e "\e[1;31mErreur lors de l'installation du paquet \e[1;36m$paquet\e[0m\e[0m"
+    fi
+  done
+
+  echo -e "\e[1;33mInstallation terminée.\e[0m"
+}
+
+# Fonction pour la configuration des dépôts
+# $1 : tableau de dépôts à activer
+
+configuration_des_repositories() {
+  nouveaux_depots=("$@")  # Récupère les dépôts depuis les arguments
+
+  echo -e "\e[1;33mDésactivation des dépôts par défaut...\e[0m"
+
+  # Désactive les dépôts par défaut qui correspondent au motif "Rocky*.repo"
+  for fichier in /etc/yum.repos.d/Rocky*.repo; do
+    nom_fichier=$(basename "$fichier")
+
+    echo -e "Désactivation du dépôt \e[1;36m$nom_fichier\e[0m"
+
+    # Modifie le fichier pour marquer le dépôt comme désactivé
+    sed -i 's/^enabled=1/enabled=0/' "$fichier"
+
+    # Vérifie si la désactivation a réussi
+    if [ $? -eq 0 ]; then
+      echo -e "Dépôt \e[1;36m$nom_fichier\e[0m \e[1;32mdésactivé avec succès.\e[0m"
+    else
+      echo -e "\e[1;31mErreur lors de la désactivation du dépôt \e[1;36m$nom_fichier\e[0m\e[0m"
+    fi
+  done
+
+  echo -e "\e[1;33mDépôts par défaut désactivés.\e[0m"
+
+  echo -e "\e[1;33mActivation des nouveaux dépôts...\e[0m"
+
+  # Active les nouveaux dépôts un par un
+  for depot in "${nouveaux_depots[@]}"; do
+    echo -e "Activation du dépôt \e[1;36m$depot\e[0m"
+
+    # Effectue l'activation du dépôt
+    # ...
+    # Exemple : sudo dnf config-manager --set-enabled "$depot"
+
+    # Vérifie si l'activation a réussi
+    if [ $? -eq 0 ]; then
+      echo -e "Dépôt \e[1;36m$depot\e[0m \e[1;32mactivé avec succès.\e[0m"
+    else
+      echo -e "\e[1;31mErreur lors de l'activation du dépôt \e[1;36m$depot\e[0m\e[0m"
+    fi
+  done
+
+  echo -e "\e[1;33mConfiguration des dépôts terminée.\e[0m"
+}
+
+ajouter_proxy_github() {
+  proxy="$1"
+
+  # Vérifier si le fichier gitconfig existe
+  if [ -f "~/.gitconfig" ]; then
+    # Ajouter les paramètres de proxy pour GitHub au fichier
+    git config --global http.proxy "$proxy"
+    git config --global https.proxy "$proxy"
+
+    # Vérifier si l'ajout a réussi
+    if [ $? -eq 0 ]; then
+      echo "Les paramètres de proxy pour GitHub ont été ajoutés avec succès au fichier ~/.gitconfig."
+    else
+    echo "Erreur lors de l'ajout des paramètres de proxy pour GitHub au fichier ~/.gitconfig."
+    return 1
+    fi
+  else
+    echo "Le fichier ~/.gitconfig n'existe pas ou n'est pas accessible."
+  return 1
+  fi
+  return 0
+}
+
+##########################################################
+### Fonctions dédiés au traitement des arguments
+##########################################################
+## Fonction traitement DESCRIPTION :
+# effectue le traitement attendu sur l'argument en cours de traitement.
+
+traitement() {
+  ajouter_proxy "$PROXY"
+  configuration_des_repository "${DEPOTS[@]}"
+  installer_paquets "${PAQUETS[@]}"
+  ajouter_proxy_github "$PROXY"
+}
+
+## Fonction usage DESCRIPTION :
+# Programme d'amorce (main) qui lance le déroulement du script, et le termine avec le code retour correspondant à la résolution du script.
+usage() {
+  traitement "$@"
+}
+
+##########################################################
+### PROGRAMME PRINCIPAL
+##########################################################
+
+# usage "$@"
+usage "$@"
+exit 0
+#### FIN DU PROGRAMME
