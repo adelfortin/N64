@@ -229,13 +229,15 @@ create_custom_repo() {
 
 # Main function
 configuration_des_repositories() {
-    local nouveaux_depots=("$@")
+    local nouveaux_depots=$@
+    local le_bon_depot=$(curl -s "$url" | grep -oP '(?<=href=")[^"]*(?=">)' | grep -E 'socle-.*\.repo' | tail -n 1)
+
 
     disable_rocky_repo
 
-    for url in "${nouveaux_depots[@]}"; do
-        echo "Activation du dépôt $url"
-        create_custom_repo "$url"
+    for url in "$le_bon_depot"; do
+        echo "Activation du dépôt $le_bon_depot"
+        create_custom_repo "$le_bon_depot"
     done
 }
 
