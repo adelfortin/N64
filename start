@@ -76,7 +76,7 @@ gestion_des_options() {
   fi
 
   if [[ $? == 0 ]]; then 
-    ajouter_proxy "$PROXY"
+    ajouter_proxy "$@"
   else
     menu_aide
     exit 1
@@ -99,7 +99,7 @@ menu_aide() {
 # Fonction pour ajouter une adresse de proxy pour DNF
 # Prend un paramètre : l'adresse du proxy à ajouter
 ajouter_proxy() {
-  proxy="$1"
+  proxy="$2"
 
   if [ "$PREPARE_ROCKY_LINUX" -eq 1 ]; then
     fichier_conf="/etc/dnf/dnf.conf"
@@ -150,7 +150,7 @@ ajouter_proxy() {
   fi
 
   if [[ $? == 0 ]]; then 
-    configuration_des_repositories "$3"
+    configuration_des_repositories "$@"
   else
     echo "ERREUR : La configuration du proxy n'a pas pu se faire."
     exit 1
@@ -229,7 +229,7 @@ create_custom_repo() {
 
 # Main function
 configuration_des_repositories() {
-    local nouveaux_depots=$@
+    local nouveaux_depots="$3"
     local le_bon_depot=$(curl -s "$url" | grep -oP '(?<=href=")[^"]*(?=">)' | grep -E 'socle-.*\.repo' | tail -n 1)
 
 
@@ -305,7 +305,7 @@ injection_des_données() {
 
 traitement() {
   #demande_du_mot_de_passe
-  injection_des_données
+  injection_des_données "$@"
   gestion_des_options "$@"
 }
 
