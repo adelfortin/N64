@@ -150,7 +150,7 @@ ajouter_proxy() {
   fi
 
   if [[ $? == 0 ]]; then 
-    configuration_des_repositories "${DEPOTS[@]}"
+    configuration_des_repositories "$3"
   else
     echo "ERREUR : La configuration du proxy n'a pas pu se faire."
     exit 1
@@ -206,57 +206,37 @@ installer_paquets() {
 # Fonction pour la configuration des dépôts
 # $1 : tableau de dépôts à activer
 
+disable_rocky_repo() {
+    echo "Disabling default Rocky Linux repository..."
+    sed -i 's/enabled=1/enabled=0/' /etc/yum.repos.d/Rocky-*.repo
+    echo -e "\e[32mDefault Rocky Linux repository disabled.\e[0m"
+}
+
+# Function to retrieve the most recent repo URL and create a custom .repo file
+create_custom_repo() {
+    local url=$1
+    local repo_name=$(curl -s "$url" | grep -oP '(?<=href=")[^"]*(?=">)' | grep -E 'socle-.*\.repo' | tail -n 1)
+    local repo_content=$(curl -s "$url/$repo_name" | sed -n '/^\[/,/^proxy/p')
+
+    if [ -n "$repo_content" ]; then
+        echo "Creating custom repo: $repo_name"
+        echo "$repo_content" > "$repo_name"
+        echo -e "\e[32mCustom repo '$repo_name' created.\e[0m"
+    else
+        echo -e "\e[31mFailed to retrieve repo content from URL: $url/$repo_name\e[0m"
+    fi
+}
+
+# Main function
 configuration_des_repositories() {
-  nouveaux_depots=("$@")  # Récupère les dépôts depuis les arguments
+    local nouveaux_depots=("$@")
 
-  echo -e "\e[1;33mDésactivation des dépôts par défaut...\e[0m"
+    disable_rocky_repo
 
-  # Désactive les dépôts par défaut qui correspondent au motif "Rocky*.repo"
-  for fichier in /etc/yum.repos.d/Rocky*.repo; do
-    nom_fichier=$(basename "$fichier")
-
-    echo -e "Désactivation du dépôt \e[1;36m$nom_fichier\e[0m"
-
-    # Modifie le fichier pour marquer le dépôt comme désactivé
-    sed -i 's/^enabled=1/enabled=0/' "$fichier"
-
-    # Vérifie si la désactivation a réussi
-    if [ $? -eq 0 ]; then
-      echo -e "Dépôt \e[1;36m$nom_fichier\e[0m \e[1;32mdésactivé avec succès.\e[0m"
-    else
-      echo -e "\e[1;31mErreur lors de la désactivation du dépôt \e[1;36m$nom_fichier\e[0m\e[0m"
-    fi
-  done
-
-  echo -e "\e[1;33mDépôts par défaut désactivés.\e[0m"
-
-  echo -e "\e[1;33mActivation des nouveaux dépôts...\e[0m"
-
-  # Active les nouveaux dépôts un par un
-  for depot in "${nouveaux_depots[@]}"; do
-    echo -e "Activation du dépôt \e[1;36m$depot\e[0m"
-
-    # Effectue l'activation du dépôt
-    # ...
-    # Exemple : sudo dnf config-manager --set-enabled "$depot"
-
-    # Vérifie si l'activation a réussi
-    if [ $? -eq 0 ]; then
-      echo -e "Dépôt \e[1;36m$depot\e[0m \e[1;32mactivé avec succès.\e[0m"
-    else
-      echo -e "\e[1;31mErreur lors de l'activation du dépôt \e[1;36m$depot\e[0m\e[0m"
-    fi
-  done
-
-  echo -e "\e[1;33mConfiguration des dépôts terminée.\e[0m"
-
-  if [[ $? == 0 ]]; then 
-    installer_paquets "${PAQUETS[@]}"
-  else
-    echo "ERREUR : La configuration des dépots n'a pas pu se faire."
-    exit 1
-  fi
-
+    for url in "${nouveaux_depots[@]}"; do
+        echo "Activation du dépôt $url"
+        create_custom_repo "$url"
+    done
 }
 
 ajouter_proxy_github() {
