@@ -304,7 +304,7 @@ configuration_des_repositories() {
 
 ajouter_proxy_github() {
   proxy="PROXY"
-
+  cd $HOME
   # Vérifier si le fichier gitconfig existe
   if [ -f "~/.gitconfig" ]; then
     # Ajouter les paramètres de proxy pour GitHub au fichier
