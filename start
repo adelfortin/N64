@@ -198,7 +198,7 @@ installer_paquets() {
       elif [ "$PREPARE_UBUNTU" -eq 1 ]; then
         sudo apt install -y $paquet
       elif [ "$PREPARE_DEBIAN" -eq 1 ]; then
-        installer_paquets "${PAQUETS[@]}"
+        sudo apt install -y $paquet
       elif [ "$PREPARE_ZORINOS" -eq 1 ]; then
         sudo apt install -y $paquet
       elif [ "$PREPARE_ARCHLINUX" -eq 1 ]; then
