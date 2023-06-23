@@ -260,7 +260,7 @@ configuration_des_repositories() {
 
     if [[ $? == 0 ]]; then
       echo "Fin de la configuration des dépôts"
-      installer_paquets "$@"
+      installer_paquets "$PAQUETS[@]"
     else
       echo "ERREUR : La configuration des dépôts n'a pas pu se faire."
       exit 1
