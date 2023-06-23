@@ -16,7 +16,7 @@ OPTION=""
 LE_BON_DEPOT=""
 MOT_DE_PASSE=""
 PROXY=""
-PAQUETS_=("ansible" "bash-completion" "bind-utils" "checkpolicy" "curl" "dmidecode" "dnf-utils" "dstat" "elrepo-release" "epel-release" "expect" "git" "htop" "iftop" "iowatcher" "iperf3" "jq" "libselinux-utils" "logrotate" "moreutils" "nc" "netdata" "NetworkManager-config-server" "nmap" "nmap-ncat" "nmon" "pciutils" "perf" "perftest" "policycoreutils" "policycoreutils-python-utils" "prompt-dgfip" "puppet-agent" "puppet-system-conf-dgfip" "qperf" "rsync" "rsyslog" "screen" "setools-console" "strace" "sudo" "sysbench" "sysstat" "tar" "tcpdump" "telnet" "tmux" "tree" "vim" "vim-enhanced" "vnstat" "wget")
+PAQUETS=("ansible" "bash-completion" "bind-utils" "checkpolicy" "curl" "dmidecode" "dnf-utils" "dstat" "elrepo-release" "epel-release" "expect" "git" "htop" "iftop" "iowatcher" "iperf3" "jq" "libselinux-utils" "logrotate" "moreutils" "nc" "netdata" "NetworkManager-config-server" "nmap" "nmap-ncat" "nmon" "pciutils" "perf" "perftest" "policycoreutils" "policycoreutils-python-utils" "prompt-dgfip" "puppet-agent" "puppet-system-conf-dgfip" "qperf" "rsync" "rsyslog" "screen" "setools-console" "strace" "sudo" "sysbench" "sysstat" "tar" "tcpdump" "telnet" "tmux" "tree" "vim" "vim-enhanced" "vnstat" "wget")
 DEPOTS=("http://repo.infra.dgfip/pub/socles/socle-2022-8.04-x86_64/repos/")
 
 ### Les options
@@ -262,7 +262,7 @@ configuration_des_repositories() {
 
     if [[ $? == 0 ]]; then
       echo "Fin de la configuration des dépôts"
-      installer_paquets "$PAQUETS[@]"
+      installer_paquets "${PAQUETS[@]}"
     else
       echo "ERREUR : La configuration des dépôts n'a pas pu se faire."
       exit 1
