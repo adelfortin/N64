@@ -319,7 +319,7 @@ ajouter_proxy_github() {
   
 
     # Vérifier si l'ajout a réussi
-    if [ $? -eq 0 ]; then
+  if [ $? -eq 0 ]; then
       echo "Les paramètres de proxy pour GitHub ont été ajoutés avec succès au fichier ~/.gitconfig."
     else
     echo "Erreur lors de l'ajout des paramètres de proxy pour GitHub au fichier ~/.gitconfig."
