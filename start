@@ -251,7 +251,7 @@ create_repo_file() {
 # Main function
 configuration_des_repositories() {
     local nouveaux_depots="$LE_BON_DEPOT"
-    local presque_le_bon_depot=$(curl -s "$nouveaux_depots" | grep -oP (?<=href=\")socle-20[0-9]{2}-[0-9].[0-9]{2}-x86_64-depot-20[0-9]{6}.repo | tail -n 1)
+    local presque_le_bon_depot=$(curl -s "$nouveaux_depots" | grep -oP socle-20[0-9]{2}-[0-9].[0-9]{2}-x86_64-depot-20[0-9]{6}.repo | tail -n 1)
     local le_bon_depot="$nouveaux_depots$presque_le_bon_depot"
     disable_rocky_repo
 
