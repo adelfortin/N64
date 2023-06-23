@@ -295,6 +295,7 @@ configuration_des_repositories() {
         installer_paquets "${PAQUETS_SERVEUR_WEB[@]}"
       elif [ "$PREPARE_ROCKY_BASE_DE_DONNEES" -eq 1 ]; then
         installer_paquets "${PAQUETS_BASE_DE_DONNEES[@]}"
+      fi
     else
       echo "ERREUR : La configuration des dépôts n'a pas pu se faire."
       exit 1
