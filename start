@@ -214,25 +214,44 @@ disable_rocky_repo() {
     echo -e "\e[32mDefault Rocky Linux repository disabled.\e[0m"
 }
 
-# Function to retrieve the most recent repo URL and create a custom .repo file
+# Function to create custom .repo files
 create_custom_repo() {
-    local url=$1
-    local repo_name=$(curl -s "$url" | grep -oP '(?<=href=")[^"]*(?=">)' | grep -E 'socle-.*\.repo' | tail -n 1)
-    local repo_content=$(curl -s "$url/$repo_name" | sed -n '/^\[/,/^proxy/p')
+    local content=$(curl -s "$1")
+    local repo_name
+    local repo_content
 
-    if [ -n "$repo_content" ]; then
-        echo "Creating custom repo: $repo_name"
-        echo "$repo_content" > "$repo_name"
-        echo -e "\e[32mCustom repo '$repo_name' created.\e[0m"
-    else
-        echo -e "\e[31mFailed to retrieve repo content from URL: $url/$repo_name\e[0m"
+    while IFS= read -r line; do
+        if [[ $line == \[*\] ]]; then
+            if [[ -n $repo_name && -n $repo_content ]]; then
+                create_repo_file "$repo_name" "$repo_content"
+            fi
+            repo_name=${line:1:-1}
+            repo_content=""
+        fi
+
+        repo_content+="$line"$'\n'
+    done <<< "$content"
+
+    if [[ -n $repo_name && -n $repo_content ]]; then
+        create_repo_file "$repo_name" "$repo_content"
     fi
+}
+
+# Function to create a custom .repo file
+create_repo_file() {
+    local repo_name=$1.repo
+    local repo_content=$2
+    local repo_path="/etc/yum.repos.d/$repo_name"
+
+    echo "Creating custom repo: $repo_name"
+    echo "$repo_content" > "$repo_path"
+    echo -e "\e[32mCustom repo '$repo_name' created.\e[0m"
 }
 
 # Main function
 configuration_des_repositories() {
     local nouveaux_depots="$LE_BON_DEPOT"
-    local le_bon_depot=$(curl -s "$nouveaux_depots" | grep -oP '(?<=href=")[^"]*(?=">)' | grep -E 'socle-.*\.repo' | tail -n 1)
+    local le_bon_depot=$(curl -s "$nouveaux_depots" | grep -oP '(?<=href=")[^"]*(?=">)' | grep -E 'http.*\.repo' | tail -n 1)
 
 
     disable_rocky_repo
