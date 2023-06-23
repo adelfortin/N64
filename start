@@ -258,14 +258,13 @@ configuration_des_repositories() {
     echo "Activation du dépôt $le_bon_depot"
     create_custom_repo "$le_bon_depot"
 
-    if [[ $? == 0 ]]; then 
-      installer_paquets
-  else
-    echo "ERREUR : La configuration des dépôts n'a pas pu se faire."
-    exit 1
-  fi
-
-
+    if [[ $? == 0 ]]; then
+      echo "Fin de la configuration des dépôts"
+      installer_paquets "$@"
+    else
+      echo "ERREUR : La configuration des dépôts n'a pas pu se faire."
+      exit 1
+    fi
 }
 
 ajouter_proxy_github() {
