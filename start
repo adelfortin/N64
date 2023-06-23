@@ -256,10 +256,8 @@ configuration_des_repositories() {
 
     disable_rocky_repo
 
-    for url in "$le_bon_depot"; do
-        echo "Activation du dépôt $le_bon_depot"
-        create_custom_repo "$le_bon_depot"
-    done
+    echo "Activation du dépôt $le_bon_depot"
+    create_custom_repo "$le_bon_depot"
 }
 
 ajouter_proxy_github() {
