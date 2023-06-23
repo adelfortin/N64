@@ -184,9 +184,6 @@ installer_paquets() {
 
   echo -e "\e[1;33mPréparation en cours...\e[0m"
 
-  # Effectue les tâches de préparation ici
-  # ...
-
   echo -e "\e[1;33mPréparation terminée.\e[0m"
 
   echo -e "\e[1;33mInstallation des paquets...\e[0m"
@@ -198,7 +195,6 @@ installer_paquets() {
         sudo dnf install $paquet -y
       elif [ "$PREPARE_CENTOS" -eq 1 ]; then
         sudo dnf install $paquet -y
-      elif [ "$PREPARE_CENTOS" -eq 1 ]; then
       elif [ "$PREPARE_UBUNTU" -eq 1 ]; then
         sudo apt install -y $paquet
       elif [ "$PREPARE_DEBIAN" -eq 1 ]; then
@@ -211,8 +207,7 @@ installer_paquets() {
         sudo dnf install $paquet -y
       elif [ "$PREPARE_ROCKY_BASE_DE_DONNEES" -eq 1 ]; then
         sudo dnf install $paquet -y
-
-      sudo dnf install $paquet -y
+      fi
 
     # Vérifie si l'installation a réussi
     if [ $? -eq 0 ]; then
