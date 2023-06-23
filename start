@@ -243,8 +243,10 @@ create_repo_file() {
     local repo_content=$2
     local repo_path="/etc/yum.repos.d/$repo_name"
 
+    #local repo_content_prov=$2
     echo "Creating custom repo: $repo_name"
     echo "$repo_content" > "$repo_path"
+    sed -i s/proxy = None/proxy = http://proxy.infra.dgfip:3128 /etc/yum.repos.d/"$repo_name"
     echo -e "\e[32mCustom repo '$repo_name' created.\e[0m"
 }
 
