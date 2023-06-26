@@ -246,6 +246,8 @@ create_custom_repo() {
                 create_repo_file "$repo_name" "$repo_content"
             fi
             repo_name=${line:1:-1}
+            echo $repo_name
+            sleep 60
             repo_content=""
         fi
         repo_content+="$line"$'\n'
