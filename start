@@ -303,7 +303,7 @@ configuration_des_repositories() {
 
     create_custom_repo "$le_bon_depot"
     echo "TEST DE LA FONCTION"
-    sleep 20
+    sleep 10
     create_special_repo_file "$repo_special_un"
 
     if [[ $? == 0 ]]; then
