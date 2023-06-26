@@ -295,7 +295,7 @@ configuration_des_repositories() {
     echo "Activation du dépôt $le_bon_depot"
 
     create_custom_repo "$le_bon_depot"
-    create_special_repo_file "php"
+    create_special_repo_file php
 
     if [[ $? == 0 ]]; then
       echo "Fin de la configuration des dépôts"
