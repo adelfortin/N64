@@ -264,7 +264,7 @@ create_repo_file() {
 
     echo "Creation du dépôt DGFIP: $repo_name"
     echo "$repo_content" > "$repo_path"
-    sed -i s/proxy = None/proxy = http://proxy.infra.dgfip:3128 /etc/yum.repos.d/"$repo_name"
+    sed -i s/proxy = None/proxy = $PROXY /etc/yum.repos.d/"$repo_name"
     echo -e "\e[32mRepo DGFIP '$repo_name' créé.\e[0m"
 }
 
