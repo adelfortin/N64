@@ -346,6 +346,7 @@ configuration_des_repositories() {
       elif [ "$PREPARE_ROCKY_SERVEUR_WEB" -eq 1 ]; then
         create_special_repo_file "$repo_special_un"
         echo "VALIDATION TEST"
+        echo "$PREPARE_ROCKY_SERVEUR_WEB"
         sleep 5
         installer_paquets "${PAQUETS_SERVEUR_WEB[@]}" "$true"
         installer_paquets "${PAQUETS[@]}" "$false"
