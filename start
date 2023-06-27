@@ -220,10 +220,17 @@ installer_paquets() {
         sudo pacman -S --noconfirm  $paquet
       elif [ "$PREPARE_ROCKY_SERVEUR_WEB" -eq 1 ]; then
         if [ $option -eq 1 ]; then
+          sleep 1
+          echo "install personalisé"
           sudo dnf install $paquet --repo $DEPOT_SERVEUR_WEB
+          sleep 1
         activation_du_module "$module_special_un" "$paquet_special_un"
+          sleep 1
         else
+          sleep 1
+          echo "install basique"
           sudo dnf install $paquet -y
+          sleep 1
         fi
       elif [ "$PREPARE_ROCKY_BASE_DE_DONNEES" -eq 1 ]; then
         sudo dnf install $paquet -y
