@@ -303,6 +303,7 @@ create_special_repo_file() {
   echo "proxy = None" >> $repo_path
   if [ $nom_du_depot_special == "php"]; then
     DEPOT_SERVEUR_WEB="$name"
+  fi
 }
 
 configuration_des_repositories() {
