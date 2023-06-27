@@ -317,11 +317,10 @@ configuration_des_repositories() {
     local true=1
     local false=0
     disable_rocky_repo
-
+    sleep 5
     echo "Activation du dépôt $le_bon_depot"
 
     create_custom_repo "$le_bon_depot"
-    echo "TEST DE LA FONCTION"
 
     if [[ $? == 0 ]]; then
       echo "Fin de la configuration des dépôts"
@@ -340,7 +339,7 @@ configuration_des_repositories() {
       elif [ "$PREPARE_ROCKY_SERVEUR_WEB" -eq 1 ]; then
         create_special_repo_file "$repo_special_un"
         echo "VALIDATION TEST"
-        sleep 10
+        sleep 5
         installer_paquets "${PAQUETS_SERVEUR_WEB[@]}" "$true"
         installer_paquets "${PAQUETS[@]}" "$false"
       elif [ "$PREPARE_ROCKY_BASE_DE_DONNEES" -eq 1 ]; then
