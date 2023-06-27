@@ -216,7 +216,7 @@ installer_paquets() {
       elif [ "$PREPARE_UBUNTU" -eq 1 ]; then
         sudo apt install -y $paquet
       elif [ "$PREPARE_DEBIAN" -eq 1 ]; then
-        sudo apt install -y $paquet
+        sudo apt install -y $paquet 
       elif [ "$PREPARE_ZORINOS" -eq 1 ]; then
         sudo apt install -y $paquet
       elif [ "$PREPARE_ARCHLINUX" -eq 1 ]; then
@@ -226,7 +226,7 @@ installer_paquets() {
           sleep 1
           echo "install personalisé"
           sleep 1
-          local liste_du_module_en_cours=$(dnf module list --disablerepo=$NOM_DEPOT_APPSTREAM --enablerepo=DEPOT_SERVEUR_WEB $paquet)
+          local liste_du_module_en_cours=$(dnf module list --disablerepo=$NOM_DEPOT_APPSTREAM --enablerepo=$DEPOT_SERVEUR_WEB $paquet)
           if [ -z $liste_du_module_en_cours ]; then
             echo "Aucun module DNF correspondant"
           fi
