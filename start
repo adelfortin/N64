@@ -219,7 +219,7 @@ installer_paquets() {
       elif [ "$PREPARE_ARCHLINUX" -eq 1 ]; then
         sudo pacman -S --noconfirm  $paquet
       elif [ "$PREPARE_ROCKY_SERVEUR_WEB" -eq 1 ]; then
-        if [ $option -eq 1 ]; then
+        if [ $option == "1" ]; then
           sleep 1
           echo "install personalisé"
           derniere_version=$(dnf search --enablerepo="$DEPOT_SERVEUR_WEB" "$paquet" | awk '/^'"$paquet"'/{print $2}' | sort -V | tail -n 1)
