@@ -20,8 +20,8 @@ LE_BON_DEPOT=""
 MOT_DE_PASSE=""
 PROXY=""
 PAQUETS=("ansible" "bash-completion" "bind-utils" "checkpolicy" "curl" "dmidecode" "dnf-utils" "dstat" "elrepo-release" "epel-release" "expect" "git" "htop" "iftop" "iowatcher" "iperf3" "jq" "libselinux-utils" "logrotate" "moreutils" "nc" "netdata" "NetworkManager-config-server" "nmap" "nmap-ncat" "nmon" "pciutils" "perf" "perftest" "policycoreutils" "policycoreutils-python-utils" "prompt-dgfip" "puppet-agent" "puppet-system-conf-dgfip" "qperf" "rsync" "rsyslog" "screen" "setools-console" "strace" "sudo" "sysbench" "sysstat" "tar" "tcpdump" "telnet" "tmux" "tree" "vim" "vim-enhanced" "vnstat" "wget")
-PAQUETS_SERVEUR_WEB=("ansible" "bash-completion" "bind-utils" "checkpolicy" "curl" "dmidecode" "dnf-utils" "dstat" "elrepo-release" "epel-release" "expect" "git" "htop" "iftop" "iowatcher" "iperf3" "jq" "libselinux-utils" "logrotate" "moreutils" "nc" "netdata" "NetworkManager-config-server" "nmap" "nmap-ncat" "nmon" "pciutils" "perf" "perftest" "policycoreutils" "policycoreutils-python-utils" "prompt-dgfip" "puppet-agent" "puppet-system-conf-dgfip" "qperf" "rsync" "rsyslog" "screen" "setools-console" "strace" "sudo" "sysbench" "sysstat" "tar" "tcpdump" "telnet" "tmux" "tree" "vim" "vim-enhanced" "vnstat" "wget")
-PAQUETS_BASE_DE_DONNEES=("ansible" "bash-completion" "bind-utils" "checkpolicy" "curl" "dmidecode" "dnf-utils" "dstat" "elrepo-release" "epel-release" "expect" "git" "htop" "iftop" "iowatcher" "iperf3" "jq" "libselinux-utils" "logrotate" "moreutils" "nc" "netdata" "NetworkManager-config-server" "nmap" "nmap-ncat" "nmon" "pciutils" "perf" "perftest" "policycoreutils" "policycoreutils-python-utils" "prompt-dgfip" "puppet-agent" "puppet-system-conf-dgfip" "qperf" "rsync" "rsyslog" "screen" "setools-console" "strace" "sudo" "sysbench" "sysstat" "tar" "tcpdump" "telnet" "tmux" "tree" "vim" "vim-enhanced" "vnstat" "wget")
+PAQUETS_SERVEUR_WEB=("ansible" "bash-completion" "bind-utils" "checkpolicy" "curl" "dmidecode" "dnf-utils" "dstat" "elrepo-release" "epel-release" "expect" "git" "htop" "iftop" "iowatcher" "iperf3" "jq" "libselinux-utils" "logrotate" "moreutils" "nc" "netdata" "NetworkManager-config-server" "nmap" "nmap-ncat" "nmon" "pciutils" "perf" "perftest" "policycoreutils" "policycoreutils-python-utils" "prompt-dgfip" "puppet-agent" "puppet-system-conf-dgfip" "qperf" "rsync" "rsyslog" "screen" "setools-console" "strace" "sudo" "sysbench" "sysstat" "tar" "tcpdump" "telnet" "tmux" "tree" "vim" "vim-enhanced" "vnstat" "wget" "php" "php-bcmath" "php-ldap" "php-mcrypt" "php-mysql" "php-odbc" "php-pdo" "php-pgsql" "php-xml")
+PAQUETS_BASE_DE_DONNEES=("ansible" "bash-completion" "bind-utils" "checkpolicy" "curl" "dmidecode" "dnf-utils" "dstat" "elrepo-release" "epel-release" "expect" "git" "htop" "iftop" "iowatcher" "iperf3" "jq" "libselinux-utils" "logrotate" "moreutils" "nc" "netdata" "NetworkManager-config-server" "nmap" "nmap-ncat" "nmon" "pciutils" "perf" "perftest" "policycoreutils" "policycoreutils-python-utils" "prompt-dgfip" "puppet-agent" "puppet-system-conf-dgfip" "qperf" "rsync" "rsyslog" "screen" "setools-console" "strace" "sudo" "sysbench" "sysstat" "tar" "tcpdump" "telnet" "tmux" "tree" "vim" "vim-enhanced" "vnstat" "wget" "postgresql14" "postgresql14-server" "postgresql14-libs" "postgresql14-devel" "postgresql14plpython" "postgresql14-test" "postgresql14-contrib" "postgresql14-docs" "postgresql14-plperl" "postgresql14pltcl" "postgresql14-plpython3" "postgresql14-test" "postgresql-pgaudit" "postgresql-pgdbca" "postgresql-selinux" "pg-catcheck_14" "pg_bulkload_14" "pg_partman14" "postgresql-anonymizer_14" "pg_top_14" "pg_bulkload_14-client" "pg_repack_14" "check_postgres" "pgbadger" "pgbouncer" "pgcenter" "pg_activity" "pgcluu" "tail_n_mail" "repmgr14" "bgw_replstatus_14" "pglogical_14")
 DEPOTS=""
 ### Les options
 PREPARE_ROCKY_LINUX=""
@@ -166,9 +166,7 @@ ajouter_proxy() {
     echo "ERREUR : La configuration du proxy n'a pas pu se faire."
     exit 1
   fi
-
 }
-
 
 # Fonction pour préparer et installer des paquets
 # $1 : tableau de paquets à installer
@@ -288,7 +286,7 @@ create_special_repo_file() {
   sleep 10
   echo "enable = 1" >> $repo_path
   sleep 10
-  echo "procy = None" >> $repo_path
+  echo "proxy = None" >> $repo_path
   sleep 10
 }
 
@@ -303,8 +301,6 @@ configuration_des_repositories() {
 
     create_custom_repo "$le_bon_depot"
     echo "TEST DE LA FONCTION"
-    sleep 10
-    create_special_repo_file "$repo_special_un"
 
     if [[ $? == 0 ]]; then
       echo "Fin de la configuration des dépôts"
@@ -321,6 +317,9 @@ configuration_des_repositories() {
       elif [ "$PREPARE_ARCHLINUX" -eq 1 ]; then
         installer_paquets "${PAQUETS[@]}"
       elif [ "$PREPARE_ROCKY_SERVEUR_WEB" -eq 1 ]; then
+        create_special_repo_file "$repo_special_un"
+        echo "VALIDATION TEST"
+        sleep 10
         installer_paquets "${PAQUETS_SERVEUR_WEB[@]}"
       elif [ "$PREPARE_ROCKY_BASE_DE_DONNEES" -eq 1 ]; then
         installer_paquets "${PAQUETS_BASE_DE_DONNEES[@]}"
