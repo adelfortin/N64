@@ -27,6 +27,7 @@ DEPOT_SERVEUR_WEB=""
 DEPOT_SERVEUR_WEB_BOOL="0"
 DEPOT_SERVEUR_BDD_BOOL="0"
 DEPOT_BDD=""
+NOM_DEPOT_APPSTREAM=""
 
 ### Les options
 PREPARE_ROCKY_LINUX=0
@@ -224,20 +225,29 @@ installer_paquets() {
         if [ "$DEPOT_SERVEUR_WEB_BOOL" == "1" ]; then
           sleep 1
           echo "install personalisé"
-          sleep 10
-          derniere_version=$(dnf search --repo="$DEPOT_SERVEUR_WEB" "$paquet" | awk '/^'"$paquet"'/{print $2}' | sort -V | tail -n 1)
+          sleep 1
+          local liste_du_module_en_cours=$(dnf module list --disablerepo=$NOM_DEPOT_APPSTREAM --enablerepo=DEPOT_SERVEUR_WEB $paquet)
+          if [ -z $liste_du_module_en_cours ]; then
+            echo "Aucun module DNF correspondant"
+          fi
+          local resultat_du_tail_en_cours=$(echo "$liste_du_module_en_cours" | tail -n 1)
+          local module_en_cours_pour_installation=$(echo "$resultat_du_tail_en_cours" | awk '{print $1}')
+
+          if [ -z "$module_en_cours_pour_installation" ]; then
+            echo "Erreur lors de l'extraction du module correspondant"
+          fi
+
+          echo "Installation du module DNF : $module_en_cours_pour_installation"
+          dnf module install "$module_en_cours_pour_installation" 
           if [ -z "$derniere_version"]; then
             echo "Aucune version trouvé"
-            exit 1
           fi
-          echo "install de la dernière versions"
-          sleep 10
-          sudo dnf install --repo $DEPOT_SERVEUR_WEB $paquet-$derniere_version
+          sleep 1
           sleep 1
         else
           echo "install basique"
           sleep 10
-          #sudo dnf install $paquet -y
+          sudo dnf install $paquet -y
           sleep 1
         fi
       elif [ "$PREPARE_ROCKY_BASE_DE_DONNEES" -eq 1 ]; then
@@ -302,6 +312,9 @@ create_repo_file() {
     echo "$repo_content" > "$repo_path"
     sed -i s/proxy = None/proxy = $PROXY /etc/yum.repos.d/"$repo_name"
     echo -e "\e[32mRepo DGFIP '$repo_name' créé.\e[0m"
+    if [[ $1 == appstream* ]]; then
+      NOM_DEPOT_APPSTREAM="$1"
+    fi
 }
 
 create_special_repo_file() {
