@@ -221,6 +221,7 @@ installer_paquets() {
       elif [ "$PREPARE_ROCKY_SERVEUR_WEB" -eq 1 ]; then
         if [ $option == "1" ]; then
           sleep 1
+          echo "option = $option"
           echo "install personalisé"
           sleep 10
           derniere_version=$(dnf search --enablerepo="$DEPOT_SERVEUR_WEB" "$paquet" | awk '/^'"$paquet"'/{print $2}' | sort -V | tail -n 1)
@@ -232,9 +233,8 @@ installer_paquets() {
           sleep 10
           sudo dnf install --enablerepo $DEPOT_SERVEUR_WEB $paquet-$derniere_version
           sleep 1
-        activation_du_module "$module_special_un" "$paquet_special_un"
-          sleep 1
         else
+          echo "option = $option"
           echo "install basique"
           sleep 10
           #sudo dnf install $paquet -y
