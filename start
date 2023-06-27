@@ -222,6 +222,7 @@ installer_paquets() {
         if [ $option == "1" ]; then
           sleep 1
           echo "install personalisé"
+          sleep 10
           derniere_version=$(dnf search --enablerepo="$DEPOT_SERVEUR_WEB" "$paquet" | awk '/^'"$paquet"'/{print $2}' | sort -V | tail -n 1)
           if [ -z "$derniere_version"]; then
             echo "Aucune version trouvé"
@@ -234,10 +235,10 @@ installer_paquets() {
         activation_du_module "$module_special_un" "$paquet_special_un"
           sleep 1
         else
-          sleep 1
           echo "install basique"
-          sudo dnf install $paquet -y
           sleep 10
+          sudo dnf install $paquet -y
+          sleep 1
         fi
       elif [ "$PREPARE_ROCKY_BASE_DE_DONNEES" -eq 1 ]; then
         sudo dnf install $paquet -y
