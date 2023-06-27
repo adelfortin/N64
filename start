@@ -220,7 +220,8 @@ installer_paquets() {
         sudo pacman -S --noconfirm  $paquet
       elif [ "$PREPARE_ROCKY_SERVEUR_WEB" -eq 1 ]; then
         if [ $option -eq 1 ]; then
-          sudo dnf install --enablerepo=$DEPOT_SERVEUR_WEB $paquet -y
+          sudo dnf install $paquet --repo=$DEPOT_SERVEUR_WEB -y
+        activation_du_module "$module_special_un" "$paquet_special_un"
         else
           sudo dnf install $paquet -y
         fi
