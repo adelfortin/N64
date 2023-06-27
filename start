@@ -237,7 +237,7 @@ installer_paquets() {
         else
           echo "install basique"
           sleep 10
-          sudo dnf install $paquet -y
+          #sudo dnf install $paquet -y
           sleep 1
         fi
       elif [ "$PREPARE_ROCKY_BASE_DE_DONNEES" -eq 1 ]; then
