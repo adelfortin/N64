@@ -23,6 +23,9 @@ PAQUETS=("ansible" "bash-completion" "bind-utils" "checkpolicy" "curl" "dmidecod
 PAQUETS_SERVEUR_WEB=("ansible" "bash-completion" "bind-utils" "checkpolicy" "curl" "dmidecode" "dnf-utils" "dstat" "elrepo-release" "epel-release" "expect" "git" "htop" "iftop" "iowatcher" "iperf3" "jq" "libselinux-utils" "logrotate" "moreutils" "nc" "netdata" "NetworkManager-config-server" "nmap" "nmap-ncat" "nmon" "pciutils" "perf" "perftest" "policycoreutils" "policycoreutils-python-utils" "prompt-dgfip" "puppet-agent" "puppet-system-conf-dgfip" "qperf" "rsync" "rsyslog" "screen" "setools-console" "strace" "sudo" "sysbench" "sysstat" "tar" "tcpdump" "telnet" "tmux" "tree" "vim" "vim-enhanced" "vnstat" "wget" "php" "php-bcmath" "php-ldap" "php-mcrypt" "php-mysql" "php-odbc" "php-pdo" "php-pgsql" "php-xml")
 PAQUETS_BASE_DE_DONNEES=("ansible" "bash-completion" "bind-utils" "checkpolicy" "curl" "dmidecode" "dnf-utils" "dstat" "elrepo-release" "epel-release" "expect" "git" "htop" "iftop" "iowatcher" "iperf3" "jq" "libselinux-utils" "logrotate" "moreutils" "nc" "netdata" "NetworkManager-config-server" "nmap" "nmap-ncat" "nmon" "pciutils" "perf" "perftest" "policycoreutils" "policycoreutils-python-utils" "prompt-dgfip" "puppet-agent" "puppet-system-conf-dgfip" "qperf" "rsync" "rsyslog" "screen" "setools-console" "strace" "sudo" "sysbench" "sysstat" "tar" "tcpdump" "telnet" "tmux" "tree" "vim" "vim-enhanced" "vnstat" "wget" "postgresql-prerequis" "postgresql14" "postgresql14-server" "postgresql14-libs" "postgresql14-devel" "postgresql14plpython" "postgresql14-test" "postgresql14-contrib" "postgresql14-docs" "postgresql14-plperl" "postgresql14pltcl" "postgresql14-plpython3" "postgresql14-test" "postgresql-pgaudit" "postgresql-pgdbca" "postgresql-selinux" "pg-catcheck_14" "pg_bulkload_14" "pg_partman14" "postgresql-anonymizer_14" "pg_top_14" "pg_bulkload_14-client" "pg_repack_14" "check_postgres" "pgbadger" "pgbouncer" "pgcenter" "pg_activity" "pgcluu" "tail_n_mail" "repmgr14" "bgw_replstatus_14" "pglogical_14")
 DEPOTS=""
+DEPOT_SERVEUR_WEB=""
+DEPOT_BDD=""
+
 ### Les options
 PREPARE_ROCKY_LINUX="0"
 PREPARE_UBUNTU="0"
@@ -215,7 +218,7 @@ installer_paquets() {
       elif [ "$PREPARE_ARCHLINUX" -eq 1 ]; then
         sudo pacman -S --noconfirm  $paquet
       elif [ "$PREPARE_ROCKY_SERVEUR_WEB" -eq 1 ]; then
-        sudo dnf install $paquet -y
+        sudo dnf install --enablerepo=$DEPOT_SERVEUR_WEB $paquet -y
       elif [ "$PREPARE_ROCKY_BASE_DE_DONNEES" -eq 1 ]; then
         sudo dnf install $paquet -y
       fi
@@ -293,6 +296,8 @@ create_special_repo_file() {
   echo "gpgcheck = 0" >> $repo_path
   echo "enable = 1" >> $repo_path
   echo "proxy = None" >> $repo_path
+  if [ $nom_du_depot_special == "php"]; then
+    DEPOT_SERVEUR_WEB="$name"
 }
 
 configuration_des_repositories() {
@@ -347,7 +352,7 @@ activation_du_module() {
     echo "Aucun paquet de pré-requis DNF trouvé."
     return 1
   else
-    dnf install "$paquet_special"
+    sudo dnf install "$paquet_special"
   fi
 
   if [ -z "$liste_de_modules" ]; then
