@@ -27,13 +27,13 @@ DEPOT_SERVEUR_WEB=""
 DEPOT_BDD=""
 
 ### Les options
-PREPARE_ROCKY_LINUX="0"
-PREPARE_UBUNTU="0"
-PREPARE_CENTOS="0"
-PREPARE_DEBIAN="0"
-PREPARE_ZORINOS="0"
-PREPARE_ROCKY_SERVEUR_WEB="0"
-PREPARE_ROCKY_BASE_DE_DONNEES="0"
+PREPARE_ROCKY_LINUX=0
+PREPARE_UBUNTU=0
+PREPARE_CENTOS=0
+PREPARE_DEBIAN=0
+PREPARE_ZORINOS=0
+PREPARE_ROCKY_SERVEUR_WEB=0
+PREPARE_ROCKY_BASE_DE_DONNEES=0
 # Les erreurs
 MAUVAIS_MOT_PASSE=81
 
@@ -338,8 +338,8 @@ configuration_des_repositories() {
         echo "VALIDATION TEST"
         sleep 10
         activation_du_module "$module_special_un" "$paquet_special_un"
-        installer_paquets "${PAQUETS_SERVEUR_WEB[@]}" "1"
-        installer_paquets "${PAQUETS[@]}" "0"
+        installer_paquets "${PAQUETS_SERVEUR_WEB[@]}" 1
+        installer_paquets "${PAQUETS[@]}" 0
       elif [ "$PREPARE_ROCKY_BASE_DE_DONNEES" -eq 1 ]; then
         installer_paquets "${PAQUETS_BASE_DE_DONNEES[@]}"
       fi
