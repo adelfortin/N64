@@ -225,7 +225,8 @@ installer_paquets() {
         if [ "$DEPOT_SERVEUR_WEB_BOOL" == "1" ]; then
           sleep 1
           echo "install personalisé"
-          sleep 1
+          echo "DEPOT SERVEUR WEB = $DEPOT_SERVEUR_WEB"
+          sleep 10
           local liste_du_module_en_cours=$(dnf module list --disablerepo=$NOM_DEPOT_APPSTREAM --enablerepo=$DEPOT_SERVEUR_WEB $paquet)
           if [ -z $liste_du_module_en_cours ]; then
             echo "Aucun module DNF correspondant"
