@@ -328,8 +328,8 @@ configuration_des_repositories() {
     local repo_special_un="php"
     local module_special_un="-postgresql14."
     local paquet_special_un="postgresql-prerequis"
-    local true=1
-    local false=0
+    local true="1"
+    local false="0"
     disable_rocky_repo
     sleep 5
     echo "Activation du dépôt $le_bon_depot"
