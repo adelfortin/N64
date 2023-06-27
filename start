@@ -227,20 +227,20 @@ installer_paquets() {
           echo "install personalisé"
           echo "DEPOT SERVEUR WEB = $DEPOT_SERVEUR_WEB"
           sleep 10
-          local liste_du_module_en_cours=$(dnf module list --disablerepo=$NOM_DEPOT_APPSTREAM --enablerepo=$DEPOT_SERVEUR_WEB $paquet)
-          if [ -z $liste_du_module_en_cours ]; then
+          local liste_du_paquet_en_cours=$(dnf search --showduplicates --disablerepo=$NOM_DEPOT_APPSTREAM --enablerepo=$DEPOT_SERVEUR_WEB $paquet)
+          if [ -z $liste_du_paquet_en_cours ]; then
             echo "Aucun module DNF correspondant"
           fi
-          local resultat_du_tail_en_cours=$(echo "$liste_du_module_en_cours" | tail -n 1)
-          local module_en_cours_pour_installation=$(echo "$resultat_du_tail_en_cours" | awk '{print $1}')
+          local resultat_du_tail_en_cours=$(echo "$liste_du_paquet_en_cours" | tail -n 1)
+          local paquet_en_cours_pour_installation=$(echo "$resultat_du_tail_en_cours" | awk '{print $1}')
 
-          if [ -z "$module_en_cours_pour_installation" ]; then
+          if [ -z "$paquet_en_cours_pour_installation" ]; then
             echo "Erreur lors de l'extraction du module correspondant"
           fi
 
-          echo "Installation du module DNF : $module_en_cours_pour_installation"
+          echo "Installation du module DNF : $paquet_en_cours_pour_installation"
           sleep 5
-          dnf install --repo $DEPOT_SERVEUR_WEB "$module_en_cours_pour_installation" 
+          dnf install --repo $DEPOT_SERVEUR_WEB "$paquet_en_cours_pour_installation" 
         else
           echo "install basique"
           sleep 10
