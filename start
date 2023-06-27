@@ -219,7 +219,7 @@ installer_paquets() {
       elif [ "$PREPARE_ARCHLINUX" -eq 1 ]; then
         sudo pacman -S --noconfirm  $paquet
       elif [ "$PREPARE_ROCKY_SERVEUR_WEB" -eq 1 ]; then
-        if [ $option -eq 1 ]
+        if [ $option -eq 1 ]; then
           sudo dnf install --enablerepo=$DEPOT_SERVEUR_WEB $paquet -y
         else
           sudo dnf install $paquet -y
