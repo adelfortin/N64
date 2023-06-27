@@ -338,10 +338,10 @@ configuration_des_repositories() {
         create_special_repo_file "$repo_special_un"
         echo "VALIDATION TEST"
         sleep 10
-        activation_du_module "$module_special_un" "$paquet_special_un"
         installer_paquets "${PAQUETS_SERVEUR_WEB[@]}" 1
         installer_paquets "${PAQUETS[@]}" 0
       elif [ "$PREPARE_ROCKY_BASE_DE_DONNEES" -eq 1 ]; then
+        activation_du_module "$module_special_un" "$paquet_special_un"
         installer_paquets "${PAQUETS_BASE_DE_DONNEES[@]}"
       fi
     else
