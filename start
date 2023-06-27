@@ -223,6 +223,7 @@ installer_paquets() {
           sudo dnf install --enablerepo=$DEPOT_SERVEUR_WEB $paquet -y
         else
           sudo dnf install $paquet -y
+        fi
       elif [ "$PREPARE_ROCKY_BASE_DE_DONNEES" -eq 1 ]; then
         sudo dnf install $paquet -y
       fi
