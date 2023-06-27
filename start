@@ -225,14 +225,14 @@ installer_paquets() {
           sleep 1
           echo "install personalisé"
           sleep 10
-          derniere_version=$(dnf search --enablerepo="$DEPOT_SERVEUR_WEB" "$paquet" | awk '/^'"$paquet"'/{print $2}' | sort -V | tail -n 1)
+          derniere_version=$(dnf search --repo="$DEPOT_SERVEUR_WEB" "$paquet" | awk '/^'"$paquet"'/{print $2}' | sort -V | tail -n 1)
           if [ -z "$derniere_version"]; then
             echo "Aucune version trouvé"
             exit 1
           fi
           echo "install de la dernière versions"
           sleep 10
-          sudo dnf install --enablerepo $DEPOT_SERVEUR_WEB $paquet-$derniere_version
+          sudo dnf install --repo $DEPOT_SERVEUR_WEB $paquet-$derniere_version
           sleep 1
         else
           echo "install basique"
