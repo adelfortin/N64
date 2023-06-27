@@ -227,6 +227,8 @@ installer_paquets() {
             echo "Aucune version trouvé"
             exit 1
           fi
+          echo "install de la dernière versions"
+          sleep 10
           sudo dnf install --enablerepo $DEPOT_SERVEUR_WEB $paquet-$derniere_version
           sleep 1
         activation_du_module "$module_special_un" "$paquet_special_un"
