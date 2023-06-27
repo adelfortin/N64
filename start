@@ -314,6 +314,8 @@ configuration_des_repositories() {
     local repo_special_un="php"
     local module_special_un="-postgresql14."
     local paquet_special_un="postgresql-prerequis"
+    local true=1
+    local false=0
     disable_rocky_repo
 
     echo "Activation du dépôt $le_bon_depot"
@@ -339,8 +341,8 @@ configuration_des_repositories() {
         create_special_repo_file "$repo_special_un"
         echo "VALIDATION TEST"
         sleep 10
-        installer_paquets "${PAQUETS_SERVEUR_WEB[@]}" 1
-        installer_paquets "${PAQUETS[@]}" 0
+        installer_paquets "${PAQUETS_SERVEUR_WEB[@]}" "$true"
+        installer_paquets "${PAQUETS[@]}" "$false"
       elif [ "$PREPARE_ROCKY_BASE_DE_DONNEES" -eq 1 ]; then
         activation_du_module "$module_special_un" "$paquet_special_un"
         installer_paquets "${PAQUETS_BASE_DE_DONNEES[@]}"
