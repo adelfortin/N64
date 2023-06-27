@@ -24,13 +24,13 @@ PAQUETS_SERVEUR_WEB=("ansible" "bash-completion" "bind-utils" "checkpolicy" "cur
 PAQUETS_BASE_DE_DONNEES=("ansible" "bash-completion" "bind-utils" "checkpolicy" "curl" "dmidecode" "dnf-utils" "dstat" "elrepo-release" "epel-release" "expect" "git" "htop" "iftop" "iowatcher" "iperf3" "jq" "libselinux-utils" "logrotate" "moreutils" "nc" "netdata" "NetworkManager-config-server" "nmap" "nmap-ncat" "nmon" "pciutils" "perf" "perftest" "policycoreutils" "policycoreutils-python-utils" "prompt-dgfip" "puppet-agent" "puppet-system-conf-dgfip" "qperf" "rsync" "rsyslog" "screen" "setools-console" "strace" "sudo" "sysbench" "sysstat" "tar" "tcpdump" "telnet" "tmux" "tree" "vim" "vim-enhanced" "vnstat" "wget" "postgresql-prerequis" "postgresql14" "postgresql14-server" "postgresql14-libs" "postgresql14-devel" "postgresql14plpython" "postgresql14-test" "postgresql14-contrib" "postgresql14-docs" "postgresql14-plperl" "postgresql14pltcl" "postgresql14-plpython3" "postgresql14-test" "postgresql-pgaudit" "postgresql-pgdbca" "postgresql-selinux" "pg-catcheck_14" "pg_bulkload_14" "pg_partman14" "postgresql-anonymizer_14" "pg_top_14" "pg_bulkload_14-client" "pg_repack_14" "check_postgres" "pgbadger" "pgbouncer" "pgcenter" "pg_activity" "pgcluu" "tail_n_mail" "repmgr14" "bgw_replstatus_14" "pglogical_14")
 DEPOTS=""
 ### Les options
-PREPARE_ROCKY_LINUX=""
-PREPARE_UBUNTU=""
-PREPARE_CENTOS=""
-PREPARE_DEBIAN=""
-PREPARE_ZORINOS=""
-PREPARE_ROCKY_SERVEUR_WEB=""
-PREPARE_ROCKY_BASE_DE_DONNEES=""
+PREPARE_ROCKY_LINUX="0"
+PREPARE_UBUNTU="0"
+PREPARE_CENTOS="0"
+PREPARE_DEBIAN="0"
+PREPARE_ZORINOS="0"
+PREPARE_ROCKY_SERVEUR_WEB="0"
+PREPARE_ROCKY_BASE_DE_DONNEES="0"
 # Les erreurs
 MAUVAIS_MOT_PASSE=81
 
@@ -286,21 +286,13 @@ create_special_repo_file() {
   local name=$(curl $url | grep -oP $nom_du_depot_special-socle-20[0-9]{2}-[0-9].[0-9]{2}-x86_64-20[0-9]{6} | tail -n 1)
   local repo_name="$name.repo"
   local repo_path="/etc/yum.repos.d/$repo_name"
-  sleep 10
   echo "Creation du dépôt DGFIP: $repo_name"
-  sleep 10
   echo "[$name]" > "$repo_path"
-  sleep 10
   echo "name = $name" >> "$repo_path"
-  sleep 10
   echo "baseurl = $url$name" >> $repo_path
-  sleep 10
   echo "gpgcheck = 0" >> $repo_path
-  sleep 10
   echo "enable = 1" >> $repo_path
-  sleep 10
   echo "proxy = None" >> $repo_path
-  sleep 10
 }
 
 configuration_des_repositories() {
@@ -309,7 +301,7 @@ configuration_des_repositories() {
     local le_bon_depot="$nouveaux_depots$presque_le_bon_depot"
     local repo_special_un="php"
     local module_special_un="-postgresql14."
-    local paquet special_un="postgresql-prerequis"
+    local paquet_special_un="postgresql-prerequis"
     disable_rocky_repo
 
     echo "Activation du dépôt $le_bon_depot"
@@ -335,7 +327,7 @@ configuration_des_repositories() {
         create_special_repo_file "$repo_special_un"
         echo "VALIDATION TEST"
         sleep 10
-        activation_du_module
+        activation_du_module "$module_special_un" "$paquet_special_un"
         installer_paquets "${PAQUETS_SERVEUR_WEB[@]}"
       elif [ "$PREPARE_ROCKY_BASE_DE_DONNEES" -eq 1 ]; then
         installer_paquets "${PAQUETS_BASE_DE_DONNEES[@]}"
@@ -347,8 +339,16 @@ configuration_des_repositories() {
 }
 
 activation_du_module() {
-  local nom_du_module=$1
+  local nom_du_module="$1"
   local liste_de_modules=$(dnf module list | grep "$nom_du_module")
+  local paquet_special="$2"
+
+  if [ -z "$paquet_special" ]; then
+    echo "Aucun paquet de pré-requis DNF trouvé."
+    return 1
+  else
+    dnf install "$paquet_special"
+  fi
 
   if [ -z "$liste_de_modules" ]; then
     echo "Aucun module DNF trouvé."
