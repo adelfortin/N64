@@ -24,6 +24,8 @@ PAQUETS_SERVEUR_WEB=("php" "php-bcmath" "php-ldap" "php-mcrypt" "php-mysql" "php
 PAQUETS_BASE_DE_DONNEES=("postgresql14" "postgresql14-server" "postgresql14-libs" "postgresql14-devel" "postgresql14plpython" "postgresql14-test" "postgresql14-contrib" "postgresql14-docs" "postgresql14-plperl" "postgresql14pltcl" "postgresql14-plpython3" "postgresql14-test" "postgresql-pgaudit" "postgresql-pgdbca" "postgresql-selinux" "pg-catcheck_14" "pg_bulkload_14" "pg_partman14" "postgresql-anonymizer_14" "pg_top_14" "pg_bulkload_14-client" "pg_repack_14" "check_postgres" "pgbadger" "pgbouncer" "pgcenter" "pg_activity" "pgcluu" "tail_n_mail" "repmgr14" "bgw_replstatus_14" "pglogical_14")
 DEPOTS=""
 DEPOT_SERVEUR_WEB=""
+DEPOT_SERVEUR_WEB_BOOL="0"
+DEPOT_SERVEUR_BDD_BOOL="0"
 DEPOT_BDD=""
 
 ### Les options
@@ -219,9 +221,8 @@ installer_paquets() {
       elif [ "$PREPARE_ARCHLINUX" -eq 1 ]; then
         sudo pacman -S --noconfirm  $paquet
       elif [ "$PREPARE_ROCKY_SERVEUR_WEB" -eq 1 ]; then
-        if [ $option == "1" ]; then
+
           sleep 1
-          echo "option = $option"
           echo "install personalisé"
           sleep 10
           derniere_version=$(dnf search --enablerepo="$DEPOT_SERVEUR_WEB" "$paquet" | awk '/^'"$paquet"'/{print $2}' | sort -V | tail -n 1)
@@ -234,7 +235,6 @@ installer_paquets() {
           sudo dnf install --enablerepo $DEPOT_SERVEUR_WEB $paquet-$derniere_version
           sleep 1
         else
-          echo "option = $option"
           echo "install basique"
           sleep 10
           #sudo dnf install $paquet -y
@@ -357,7 +357,9 @@ configuration_des_repositories() {
         echo "PREPARE ROCKY SERVEUR WEB = $PREPARE_ROCKY_SERVEUR_WEB"
         echo "true = $true"
         sleep 5
-        installer_paquets "${PAQUETS_SERVEUR_WEB[@]}" "$true"
+        DEPOT_SERVEUR_WEB_BOOL="1"
+        installer_paquets "${PAQUETS_SERVEUR_WEB[@]}"
+        DEPOT_SERVEUR_WEB_BOOL="0"
         installer_paquets "${PAQUETS[@]}" "$false"
       elif [ "$PREPARE_ROCKY_BASE_DE_DONNEES" -eq 1 ]; then
         activation_du_module "$module_special_un" "$paquet_special_un"
