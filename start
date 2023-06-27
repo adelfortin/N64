@@ -239,6 +239,7 @@ installer_paquets() {
           fi
 
           echo "Installation du module DNF : $module_en_cours_pour_installation"
+          sleep 5
           dnf module install --repo $DEPOT_SERVEUR_WEB "$module_en_cours_pour_installation" 
           if [ -z "$derniere_version"]; then
             echo "Aucune version trouvé"
