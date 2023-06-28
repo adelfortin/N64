@@ -422,7 +422,7 @@ activation_du_module() {
 }
 
 ajouter_proxy_github() {
-  proxy="PROXY"
+  proxy="$PROXY"
   cd $HOME
   # Vérifier si le fichier gitconfig existe
   if [ -f "~/.gitconfig" ]; then
