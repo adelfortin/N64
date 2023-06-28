@@ -241,7 +241,7 @@ installer_paquets() {
 
           echo "Installation du module DNF : $paquet_en_cours_pour_installation"
           sleep 5
-          dnf install --repo $DEPOT_SERVEUR_WEB "$paquet_en_cours_pour_installation" 
+          dnf install --repo $DEPOT_SERVEUR_WEB "$paquet_en_cours_pour_installation" -y
         else
           echo "install basique"
           sleep 10
