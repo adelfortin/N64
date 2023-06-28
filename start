@@ -325,7 +325,7 @@ create_special_repo_file() {
   echo "[$name]" > "$repo_path"
   echo "name = $name" >> "$repo_path"
   echo "baseurl = $url$name" >> $repo_path
-  echo "stream=$STREAM_DU_DEPOT_SERVEUR_WEB"
+  echo "stream=$STREAM_DU_DEPOT_SERVEUR_WEB" >> $repo_path
   echo "gpgcheck = 0" >> $repo_path
   echo "enable = 1" >> $repo_path
   echo "proxy = None" >> $repo_path
