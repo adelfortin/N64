@@ -215,7 +215,6 @@ installer_paquets() {
       elif [ "$PREPARE_CENTOS" -eq 1 ]; then
         sudo dnf install $paquet -y
       elif [ "$PREPARE_UBUNTU" -eq 1 ]; then
-        sudo apt install -y $paquet
       elif [ "$PREPARE_DEBIAN" -eq 1 ]; then
         sudo apt install -y $paquet 
       elif [ "$PREPARE_ZORINOS" -eq 1 ]; then
@@ -326,8 +325,9 @@ create_special_repo_file() {
   echo "name = $name" >> "$repo_path"
   echo "baseurl = $url$name" >> $repo_path
   echo "stream=$STREAM_DU_DEPOT_SERVEUR_WEB" >> $repo_path
+  echo "module_hotfixes=1" >> $repo_path
   echo "gpgcheck = 0" >> $repo_path
-  echo "enable = 1" >> $repo_path
+  echo "enabled = 1" >> $repo_path
   echo "proxy = None" >> $repo_path
   if [ $nom_du_depot_special == "php" ]; then
     DEPOT_SERVEUR_WEB="$name"
