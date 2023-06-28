@@ -2,8 +2,8 @@
 
 # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Auteur : Adel Fortin
-# Version : v0.2.7
-# date : 23-06-2023
+# Version : v0.3.1
+# date : 28-06-2023
 # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # TODO
@@ -12,6 +12,7 @@
 # $1 = l'option ou encore le type de distribution linux 
 # $2 l'url du proxy utilisé
 # $3 l'adresse où trouver les dépôts privés
+# $4 pour quel appli est installé la vm
 
 #### DEBUT DU PROGRAMME
 ### Les variables
