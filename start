@@ -215,6 +215,7 @@ installer_paquets() {
       elif [ "$PREPARE_CENTOS" -eq 1 ]; then
         sudo dnf install $paquet -y
       elif [ "$PREPARE_UBUNTU" -eq 1 ]; then
+        sudo apt install -y $paquet 
       elif [ "$PREPARE_DEBIAN" -eq 1 ]; then
         sudo apt install -y $paquet 
       elif [ "$PREPARE_ZORINOS" -eq 1 ]; then
